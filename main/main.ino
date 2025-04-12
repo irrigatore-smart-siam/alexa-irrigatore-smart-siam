@@ -1,17 +1,13 @@
-#define BLYNK_TEMPLATE_ID "TMPL4VplPn5DM"
-#define BLYNK_TEMPLATE_NAME "Lolin"
-#define BLYNK_AUTH_TOKEN "NG3hog7xMC34G5Bt9DyOMcdp1a-iMvDt"
+#define BLYNK_TEMPLATE_ID "TMPL4FQ929HOm"
+#define BLYNK_TEMPLATE_NAME "MyLolin"
+#define BLYNK_AUTH_TOKEN "VprRzFgS-tXN2kLCdVn8oI8cR-DCeJss"
 #define BLYNK_PRINT Serial
 
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 #include "arduino_secrets.h"  
-#include "thingProperties.h"  // Includi il file generato da Arduino IoT Cloud
-
-// Credenziali WiFi
-char ssid[] = "IoT - WIFI";
-char pass[] = "03GDVBH223";
+#include "thingProperties.h"
 
 // Definizione pin
 const uint8_t MOISTURESENSORPIN = 7;  // Sensore di umidità
@@ -106,6 +102,7 @@ void updateLedStatus(float waterPercentage) {
     digitalWrite(GREEN_PIN, LOW);  // LED verde OFF
     Blynk.virtualWrite(V3, 255);  // Rosso acceso
     Blynk.virtualWrite(V4, 0);    // Verde spento
+    Blynk.logEvent("alert_acqua_scarsa");
   }
 }
 
@@ -168,7 +165,7 @@ void checkMoisture() {
 }
 
 void checkPumpTimer() {
-  if (pumpOn && (millis() - pumpTimer >= 1000) && !isManualMode) {
+  if (pumpOn && (millis() - pumpTimer >= 500) && !isManualMode) {
     Serial.println("->SPEGNIMENTO POMPA (timer)");
     digitalWrite(RELAYPIN, HIGH);
     pumpOn = false;
@@ -317,7 +314,6 @@ void loop() {
   Blynk.run();            // Gestisci la comunicazione Blynk
   timer.run();            // Esegui i timer
   
-  // Controlla l'umidità del terreno per la modalità automatica
   checkMoisture();
 
   delay(10);
