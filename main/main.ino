@@ -157,7 +157,7 @@ void checkMoisture() {
   // Attiva la pompa automaticamente se necessario
   if (moistureValue > SOGLIA_UM && !pumpOn && (currentTime - lastActivationTime >= 60000)) {
     Serial.println("->ATTIVAZIONE POMPA (sensore)");
-    digitalWrite(RELAYPIN, HIGH);
+    digitalWrite(RELAYPIN, LOW);
     pumpOn = true;
     pumpTimer = currentTime;
     lastActivationTime = currentTime;
@@ -170,14 +170,14 @@ void checkMoisture() {
 void checkPumpTimer() {
   if (pumpOn && (millis() - pumpTimer >= 1000) && !isManualMode) {
     Serial.println("->SPEGNIMENTO POMPA (timer)");
-    digitalWrite(RELAYPIN, LOW);
+    digitalWrite(RELAYPIN, HIGH);
     pumpOn = false;
   }
   
   // Se la pompa è stata attivata manualmente da Alexa, controlla se è ora di disattivarla
   if (isManualMode && livello == 0 && pumpOn) {
     Serial.println("->SPEGNIMENTO POMPA (manuale)");
-    digitalWrite(RELAYPIN, LOW);
+    digitalWrite(RELAYPIN, HIGH);
     pumpOn = false;
     isManualMode = false;
   }
@@ -240,7 +240,7 @@ void onLivelloChange() {
   if (livello == 1) {
     // Attiva la pompa manualmente
     Serial.println("->ATTIVAZIONE POMPA (manuale da Alexa)");
-    digitalWrite(RELAYPIN, HIGH);
+    digitalWrite(RELAYPIN, LOW);
     pumpOn = true;
     pumpTimer = millis();
     isManualMode = true;  // Imposta la modalità manuale
@@ -252,7 +252,7 @@ void onLivelloChange() {
     // Disattiva la pompa se è stata attivata manualmente
     if (isManualMode && pumpOn) {
       Serial.println("->SPEGNIMENTO POMPA (manuale da Alexa)");
-      digitalWrite(RELAYPIN, LOW);
+      digitalWrite(RELAYPIN, HIGH);
       pumpOn = false;
       isManualMode = false;
     }
@@ -270,7 +270,7 @@ void setup() {
   pinMode(MOISTURESENSORPIN, INPUT);
 
   // Inizializzazione stato pin
-  digitalWrite(RELAYPIN, LOW);
+  digitalWrite(RELAYPIN, HIGH);
   digitalWrite(RED_PIN, LOW);    // LED rosso OFF
   digitalWrite(GREEN_PIN, LOW);  // LED verde OFF
   digitalWrite(BLUE_PIN, LOW);   // LED blu OFF
@@ -294,7 +294,7 @@ void setup() {
 
   if (moistureValue > SOGLIA_UM) {
     Serial.println("-> ATTIVAZIONE POMPA (Startup)");
-    digitalWrite(RELAYPIN, HIGH);
+    digitalWrite(RELAYPIN, LOW);
     pumpOn = true;
     pumpTimer = millis();
     lastActivationTime = millis();
