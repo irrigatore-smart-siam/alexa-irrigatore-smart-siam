@@ -30,7 +30,7 @@ bool isManualMode = false;          // Flag per il controllo manuale
 unsigned long lastActivationTime = 0;
 float lastWaterPercentage = 0;
 unsigned long cloudSwitchResetTimer = 0;
-const unsigned long CLOUD_SWITCH_RESET_DELAY = 1500; // 1.5s per reset CloudSwitch
+const unsigned long CLOUD_SWITCH_RESET_DELAY = 400; // 0.4 per reset CloudSwitch
 
 // Timer per il lampeggiamento del LED blu
 unsigned long blueBlinkTimer = 0;
@@ -151,8 +151,8 @@ void checkMoisture() {
   int moistureValue = analogRead(MOISTURESENSORPIN);
   unsigned long currentTime = millis();
   
-  // Attiva la pompa automaticamente se necessario
-  if (moistureValue > SOGLIA_UM && !pumpOn && (currentTime - lastActivationTime >= 60000)) {
+  // Attiva la pompa automaticamente se necessario, ogni 24h
+  if (moistureValue > SOGLIA_UM && !pumpOn && (currentTime - lastActivationTime >= 86400000)) {
     Serial.println("->ATTIVAZIONE POMPA (sensore)");
     digitalWrite(RELAYPIN, LOW);
     pumpOn = true;
